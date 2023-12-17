@@ -1,0 +1,56 @@
+[
+  {
+    "_id": "7c84f45e2a4c7c1d980e5f4a",
+    "question": "What's your preferred outdoor activity?",
+    "options": [
+      "Hiking in the mountains",
+      "Cycling through trails",
+      "Picnicking in the park"
+    ]
+  },
+  {
+    "_id": "9fb7d1f7e68d62c04fe67a0d",
+    "question": "Choose your favorite type of music:",
+    "options": ["Rock and Roll", "Pop beats", "Jazz rhythms"]
+  },
+  {
+    "_id": "6a2c3776bbbf234fcfe3a2b3",
+    "question": "Which type of books do you enjoy reading?",
+    "options": ["Mystery novels", "Fantasy adventures", "Romantic dramas"]
+  },
+  {
+    "_id": "f5b9d89261a0ae75300e543c",
+    "question": "What's your go-to workout routine?",
+    "options": ["Cardio workouts", "Strength training", "Yoga sessions"]
+  },
+  {
+    "_id": "8e40a87696ed0e5f1c8e90c4",
+    "question": "Select your preferred mode of transportation:",
+    "options": ["Driving a car", "Cycling around", "Taking public transit"]
+  },
+  {
+    "_id": "d3e912bf06c9fe1d4c7bf4a9",
+    "question": "Which season do you enjoy the most?",
+    "options": ["Springtime blooms", "Summer sunshine", "Cozy winter"]
+  },
+  {
+    "_id": "a65d8a62132a8e7fc5414e9a",
+    "question": "What's your favorite weekend getaway?",
+    "options": ["Beach retreat", "Mountain cabin", "City exploration"]
+  },
+  {
+    "_id": "f6bca571d0098267d9b1f7ec",
+    "question": "Choose your preferred leisure activity:",
+    "options": ["Watching movies", "Gaming marathon", "Reading books"]
+  },
+  {
+    "_id": "ecb654cc920f8e1292d9a4bd",
+    "question": "Which cuisine do you enjoy the most?",
+    "options": ["Italian delicacies", "Asian flavors", "Mediterranean dishes"]
+  },
+  {
+    "_id": "1a3d5e9c4b3d6f8e2d0a1b1f",
+    "question": "What type of art appeals to you?",
+    "options": ["Classic paintings", "Modern sculptures", "Street art"]
+  }
+]
