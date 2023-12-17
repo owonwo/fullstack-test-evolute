@@ -2,6 +2,7 @@
 import {
   Button,
   Card,
+  Checkbox,
   Col,
   ConfigProvider,
   Flex,
@@ -16,6 +17,7 @@ import { assoc } from "ramda";
 import React from "react";
 import { useFormPersist } from "~/hooks_/use-form-state";
 import { SurveyQuestion } from "~/types/interfaces";
+import { CheckboxValueType } from "antd/es/checkbox/Group";
 
 type Props = {
   params: { id: string };
@@ -90,12 +92,15 @@ export default function Survey({ params }: Props) {
 function SurveyQuestions(props: { surveyId: string; data: SurveyQuestion[] }) {
   const { data: questions, surveyId } = props;
 
-  const { data } = useFormPersist(surveyId, () => state);
-  const [state, setState] = React.useState<Record<string, number>>(
+  const { data } = useFormPersist(surveyId + ":checkbox", () => state);
+  const [state, setState] = React.useState<Record<string, CheckboxValueType[]>>(
     () => data ?? {},
   );
 
-  const setAnswer = (question_id: string, answer_index: string) => {
+  const setAnswer = (
+    question_id: string,
+    answer_index: CheckboxValueType[],
+  ) => {
     setState(assoc(question_id, answer_index));
   };
 
@@ -113,26 +118,26 @@ function SurveyQuestions(props: { surveyId: string; data: SurveyQuestion[] }) {
                 {index + 1}. {sample_data.question}
               </Typography.Title>
 
-              <Radio.Group
-                value={state[sample_data._id] ?? ""}
-                onChange={(event) => {
-                  setAnswer(sample_data._id, event.target.value);
+              <Typography.Paragraph className={"opacity-50"}>
+                Select one answer
+              </Typography.Paragraph>
+
+              <Checkbox.Group
+                value={state[sample_data._id] ?? []}
+                onChange={(values) => {
+                  setAnswer(sample_data._id, values);
                 }}
               >
-                <Typography.Paragraph color={"blue"}>
-                  Select one answer
-                </Typography.Paragraph>
-
                 <Space size={8} direction={"vertical"}>
                   {sample_data.options.map((item, idx) => {
                     return (
-                      <Radio key={idx} name={sample_data._id} value={idx}>
+                      <Checkbox key={idx} name={sample_data._id} value={idx}>
                         {item}
-                      </Radio>
+                      </Checkbox>
                     );
                   })}
                 </Space>
-              </Radio.Group>
+              </Checkbox.Group>
             </Card>
           );
         })}
