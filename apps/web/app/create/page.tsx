@@ -10,10 +10,23 @@ import {
   Card,
   Flex,
 } from "antd";
-import { PlusOutlined, CloseOutlined as CloseIcon } from "@ant-design/icons";
+import {
+  PlusOutlined,
+  CloseOutlined as CloseIcon,
+  SaveOutlined,
+} from "@ant-design/icons";
+import { useFormPersist } from "~/hooks_/use-form-state";
+
+const DEFAULT_VALUE = {
+  questions: [{}],
+};
 
 const SurveyForm = () => {
   const [form] = Form.useForm();
+
+  const { data: value } = useFormPersist("create-survey", () => {
+    return form.getFieldsValue();
+  });
 
   const onFinishFailed = (errorInfo: any) => {
     console.log("Failed:", errorInfo);
@@ -30,6 +43,7 @@ const SurveyForm = () => {
     <div className={"container mx-auto px-4 py-12"}>
       <Form
         form={form}
+        initialValues={value ?? DEFAULT_VALUE}
         name={"survey-form"}
         layout={"vertical"}
         onFinish={onFinish}
@@ -39,7 +53,17 @@ const SurveyForm = () => {
 
         <Form.List
           name={"questions"}
-          initialValue={[""]} // Initial empty choices
+          rules={[
+            {
+              validator: async (_, options) => {
+                if (options === 0) {
+                  throw new Error(
+                    "At least one question required to create a survey.",
+                  );
+                }
+              },
+            },
+          ]}
         >
           {(fields, { add, remove }) => (
             <Space direction={"vertical"} size={32} className={"w-full"}>
@@ -52,22 +76,26 @@ const SurveyForm = () => {
                   />
                 );
               })}
-              <Form.Item>
-                <Space className={"py-4"}>
-                  <Button
-                    size={"large"}
-                    type="dashed"
-                    onClick={() => add()}
-                    icon={<PlusOutlined />}
-                  >
-                    Add Question
-                  </Button>
 
-                  <Button size={"large"} type="primary" htmlType="submit">
-                    Create Survey
-                  </Button>
-                </Space>
-              </Form.Item>
+              <Flex justify={"space-between"} className={"py-4"}>
+                <Button
+                  size={"large"}
+                  type="dashed"
+                  onClick={() => add()}
+                  icon={<PlusOutlined />}
+                >
+                  Add Question
+                </Button>
+
+                <Button
+                  size={"large"}
+                  type="default"
+                  htmlType="submit"
+                  icon={<SaveOutlined />}
+                >
+                  Create Survey
+                </Button>
+              </Flex>
             </Space>
           )}
         </Form.List>
@@ -109,7 +137,6 @@ function SurveyField(props: {
 
       <Form.List
         name={[serial, "options"]}
-        initialValue={["", ""]} // Initial empty choices
         rules={[
           {
             validator: async (_, options) => {
