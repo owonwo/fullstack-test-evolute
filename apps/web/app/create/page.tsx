@@ -120,7 +120,12 @@ function SurveyField(props: {
         >
           Question #{index + 1}
         </Typography.Paragraph>
-        <Button icon={<CloseIcon />} shape={"circle"} onClick={onRemove} />
+        <Button
+          icon={<CloseIcon />}
+          type="text"
+          shape={"circle"}
+          onClick={onRemove}
+        />
       </Flex>
 
       <Form.Item
@@ -152,7 +157,7 @@ function SurveyField(props: {
         {(fields, { add, remove }) => {
           return (
             <Flex vertical>
-              <Space direction={"vertical"}>
+              <Flex vertical gap={8} align={"flex-start"}>
                 {fields.map(({ key, name, fieldKey, ...restField }) => {
                   return (
                     <Space
@@ -193,7 +198,7 @@ function SurveyField(props: {
                     Add Choice
                   </Button>
                 </Form.Item>
-              </Space>
+              </Flex>
             </Flex>
           );
         }}
