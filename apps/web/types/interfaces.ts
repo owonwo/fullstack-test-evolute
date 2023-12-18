@@ -1,3 +1,5 @@
+import { CheckboxValueType } from "antd/es/checkbox/Group";
+
 export type Question = {
   text: string;
   options: { _id: string; text: string }[];
@@ -24,3 +26,5 @@ export type SuccessPayload<TData> =
       success: true;
       data: TData;
     };
+
+export type SelectedSurveyOptions = Record<string, CheckboxValueType[]>;

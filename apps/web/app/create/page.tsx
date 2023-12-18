@@ -16,9 +16,9 @@ import {
   SaveOutlined,
 } from "@ant-design/icons";
 import { useFormPersist } from "~/hooks/use-form-state";
-import { useCreateSurvey } from "~/hooks/use-create-survey";
 import { CreateSurveyPayload, Survey } from "~/types/interfaces";
 import { SurveyCreatedModal } from "~/app/create/survey-modal";
+import { useCreateSurvey } from "~/hooks/use-survey";
 
 const DEFAULT_VALUE = {
   title: "",

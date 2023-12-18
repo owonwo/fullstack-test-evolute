@@ -1,11 +1,13 @@
 "use client";
-import { Col, Flex, Row, Skeleton, Typography } from "antd";
+import { Col, Flex, message, Row, Skeleton, Typography } from "antd";
 import React from "react";
-import { SurveyParticipant } from "~/types/interfaces";
+import { SelectedSurveyOptions, SurveyParticipant } from "~/types/interfaces";
 import { PersonalInfo } from "./personal-info";
 import { SurveyQuestions } from "~/app/survey/[id]/survey-questions";
-import { useGetSurvey } from "~/hooks/use-get-survey";
+import { useCreateSurveyResponse, useGetSurvey } from "~/hooks/use-survey";
 import { match } from "ts-pattern";
+import { Routes } from "~/libs/routes";
+import { useRouter } from "next/navigation";
 
 type Props = {
   params: { id: string };
@@ -13,11 +15,30 @@ type Props = {
 };
 
 export default function Survey({ params }: Props) {
-  const [isStarted, setIsStarted] = React.useState(false);
+  const router = useRouter();
   const { status, data, isLoading } = useGetSurvey(params.id);
+  const createSurveyResponse = useCreateSurveyResponse(params.id);
+
+  const [participant, setParticipant] =
+    React.useState<SurveyParticipant | null>(null);
 
   const onSubmit = (participant: SurveyParticipant) => {
-    setIsStarted(true);
+    setParticipant(participant);
+  };
+
+  const onSaveResponse = (selectedOptions: SelectedSurveyOptions) => {
+    createSurveyResponse
+      .mutateAsync({
+        user: participant,
+        survey: params.id,
+        answers: Object.values(selectedOptions),
+      })
+      .then(() => {
+        router.push(Routes.SurveyResult(params.id));
+      })
+      .catch(() => {
+        message.error("Error saving results. Please check your connection");
+      });
   };
 
   return (
@@ -32,9 +53,16 @@ export default function Survey({ params }: Props) {
             );
           })
           .with({ status: "success" }, () => {
+            if (!data)
+              return (
+                <UnexpectedError>
+                  Something went wrong. We're working on it
+                </UnexpectedError>
+              );
+
             return (
               <>
-                {!isStarted ? (
+                {!participant ? (
                   <Flex vertical gap={24} align={"center"}>
                     <Flex vertical className={"max-w-md text-center"}>
                       <Typography.Paragraph
@@ -51,7 +79,9 @@ export default function Survey({ params }: Props) {
                   </Flex>
                 ) : (
                   <SurveyQuestions
-                    data={data?.questions ?? []}
+                    data={data}
+                    isLoading={createSurveyResponse.isLoading}
+                    onSubmit={onSaveResponse}
                     surveyId={params.id}
                   />
                 )}
@@ -59,11 +89,13 @@ export default function Survey({ params }: Props) {
             );
           })
           .otherwise(() => (
-            <Typography.Paragraph>
-              Something unexpected happened
-            </Typography.Paragraph>
+            <UnexpectedError>Something unexpected happened</UnexpectedError>
           ))}
       </Col>
     </Row>
   );
+}
+
+function UnexpectedError(props: { children?: React.ReactNode }) {
+  return <Typography.Paragraph>{props.children}</Typography.Paragraph>;
 }

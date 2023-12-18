@@ -1,19 +1,26 @@
 "use client";
-import { Survey } from "~/types/interfaces";
+import { SelectedSurveyOptions, Survey } from "~/types/interfaces";
 import { useFormPersist } from "~/hooks/use-form-state";
 import React from "react";
 import { CheckboxValueType } from "antd/es/checkbox/Group";
 import { assoc } from "ramda";
 import { Button, Card, Checkbox, Flex, Space, Typography } from "antd";
 
+/** Note: Tried to use the AntD Form components for this but kept failing **/
 export function SurveyQuestions(props: {
   surveyId: string;
-  data: Survey["questions"];
+  data: Survey;
+  isLoading: boolean;
+  onSubmit: (state: SelectedSurveyOptions) => void;
 }) {
-  const { data: questions, surveyId } = props;
-
-  const { data } = useFormPersist(surveyId + ":checkbox", () => state);
-  const [state, setState] = React.useState<Record<string, CheckboxValueType[]>>(
+  const {
+    data: { title, questions },
+    surveyId,
+    isLoading,
+    onSubmit,
+  } = props;
+  const { data } = useFormPersist(surveyId + ":checkbox_", () => checks);
+  const [checks, setChecks] = React.useState<SelectedSurveyOptions>(
     () => data ?? {},
   );
 
@@ -21,14 +28,17 @@ export function SurveyQuestions(props: {
     question_id: string,
     answer_index: CheckboxValueType[],
   ) => {
-    setState(assoc(question_id, answer_index));
+    setChecks(assoc(question_id, answer_index));
   };
 
   return (
     <Flex vertical>
-      <Typography.Title level={4}>
-        Answer all questions and click the Finish button to save
-      </Typography.Title>
+      <Flex vertical>
+        <Typography.Title level={1}>{title}</Typography.Title>
+        <Typography.Paragraph>
+          All answers are required for this survey
+        </Typography.Paragraph>
+      </Flex>
 
       <Space size={32} direction={"vertical"}>
         {questions.map((question, index) => {
@@ -45,7 +55,7 @@ export function SurveyQuestions(props: {
               </Typography.Paragraph>
 
               <Checkbox.Group
-                value={state[question_id] ?? []}
+                value={checks[question_id] ?? []}
                 onChange={(values) => {
                   setAnswer(question_id, values);
                 }}
@@ -56,7 +66,7 @@ export function SurveyQuestions(props: {
                       <Checkbox
                         key={option._id}
                         name={question.text}
-                        value={idx}
+                        value={option._id}
                       >
                         {option.text}
                       </Checkbox>
@@ -69,7 +79,13 @@ export function SurveyQuestions(props: {
         })}
 
         <Flex align={"stretch"} justify={"flex-end"}>
-          <Button type={"default"} size={"large"}>
+          <Button
+            type={"default"}
+            disabled={isLoading}
+            loading={isLoading}
+            size={"large"}
+            onClick={() => onSubmit(checks)}
+          >
             Submit
           </Button>
         </Flex>
