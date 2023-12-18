@@ -6,8 +6,8 @@ import {
   Col,
   ConfigProvider,
   Flex,
+  Form,
   Input,
-  Radio,
   Row,
   Space,
   Typography,
@@ -15,7 +15,7 @@ import {
 import theme from "~/config/theme";
 import { assoc } from "ramda";
 import React from "react";
-import { useFormPersist } from "~/hooks_/use-form-state";
+import { useFormPersist } from "~/hooks/use-form-state";
 import { SurveyQuestion } from "~/types/interfaces";
 import { CheckboxValueType } from "antd/es/checkbox/Group";
 
@@ -25,11 +25,6 @@ type Props = {
 };
 
 export default function Survey({ params }: Props) {
-  const [sessionData, setSessionData] = React.useState({
-    full_name: "",
-    email: "",
-  });
-
   const [questions, setQuestions] = React.useState<SurveyQuestion[]>([]);
   const [isStarted, setIsStarted] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -57,35 +52,53 @@ export default function Survey({ params }: Props) {
       <Row justify={"center"} align={"middle"} className={"min-h-screen py-24"}>
         <Col span={21} md={16} lg={12}>
           {!isStarted ? (
-            <Card>
-              <Typography.Title level={4}>Welcome</Typography.Title>
-
-              <Typography.Paragraph>
-                Some personal information is required for this survey.
-              </Typography.Paragraph>
-
-              <Space direction={"vertical"} size={12} className={"w-full"}>
-                <Input size="large" placeholder="Full name" type={"text"} />
-                <Input
-                  size="large"
-                  placeholder="Email address"
-                  type={"email"}
-                />
-                <Button
-                  className={"mx-auto block"}
-                  loading={isLoading}
-                  onClick={onSubmit}
-                >
-                  Begin
-                </Button>
-              </Space>
-            </Card>
+            <PersonalInfo isLoading={isLoading} onSuccess={onSubmit} />
           ) : (
             <SurveyQuestions data={questions} surveyId={params.id} />
           )}
         </Col>
       </Row>
     </ConfigProvider>
+  );
+}
+
+function PersonalInfo(props: { isLoading: boolean; onSuccess: () => void }) {
+  const { isLoading } = props;
+
+  const [form] = Form.useForm();
+
+  return (
+    <Card>
+      <Typography.Title level={4}>Welcome</Typography.Title>
+
+      <Typography.Paragraph>
+        Some personal information is required for this survey.
+      </Typography.Paragraph>
+
+      <Form form={form} layout={"vertical"}>
+        <Flex vertical className={"w-full"}>
+          <Form.Item name={"full_name"} label={"Full name"}>
+            <Input size="large" placeholder="John Doe" type={"text"} />
+          </Form.Item>
+
+          <Form.Item name={"email_address"} label={"Email address"}>
+            <Input
+              size="large"
+              placeholder="someone@domain.com"
+              type={"email"}
+            />
+          </Form.Item>
+
+          <Button
+            className={"mx-auto block"}
+            loading={isLoading}
+            onClick={props.onSuccess}
+          >
+            Begin
+          </Button>
+        </Flex>
+      </Form>
+    </Card>
   );
 }
 
@@ -119,7 +132,7 @@ function SurveyQuestions(props: { surveyId: string; data: SurveyQuestion[] }) {
               </Typography.Title>
 
               <Typography.Paragraph className={"opacity-50"}>
-                Select one answer
+                You can select more than one option
               </Typography.Paragraph>
 
               <Checkbox.Group

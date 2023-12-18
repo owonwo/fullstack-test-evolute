@@ -1,42 +1,61 @@
 "use client";
 import React from "react";
 import {
-  Form,
-  Input,
   Button,
-  Space,
-  message,
-  Typography,
   Card,
   Flex,
+  Form,
+  Input,
+  message,
+  Space,
+  Typography,
 } from "antd";
 import {
-  PlusOutlined,
   CloseOutlined as CloseIcon,
+  PlusOutlined,
   SaveOutlined,
 } from "@ant-design/icons";
-import { useFormPersist } from "~/hooks_/use-form-state";
+import { useFormPersist } from "~/hooks/use-form-state";
+import { useCreateSurvey } from "~/hooks/use-create-survey";
+import { CreateSurveyPayload, Survey } from "~/types/interfaces";
+import { SurveyCreatedModal } from "~/app/create/survey-modal";
 
 const DEFAULT_VALUE = {
+  title: "",
   questions: [{}],
 };
 
 const SurveyForm = () => {
   const [form] = Form.useForm();
 
-  const { data: value } = useFormPersist("create-survey", () => {
-    return form.getFieldsValue();
-  });
+  const { data: value, clear: clearPersistedData } = useFormPersist(
+    "create-survey",
+    () => {
+      return form.getFieldsValue();
+    },
+  );
+
+  const [surveyData, setSurveyData] = React.useState<Survey | null>(null);
+
+  const createSurvey = useCreateSurvey();
 
   const onFinishFailed = (errorInfo: any) => {
-    console.log("Failed:", errorInfo);
     message.error("Please fill in all required fields.");
   };
 
-  const onFinish = (values: any) => {
+  const onFinish = (values: CreateSurveyPayload) => {
     // Handle form submission (you can send the data to your server or process it as needed)
-    console.log("Received values:", values);
-    message.success("Survey questions and choices created successfully!");
+    createSurvey
+      .mutateAsync(values)
+      .then((response) => {
+        message.success("Survey created successfully!");
+        setSurveyData(response);
+        clearPersistedData();
+        form.resetFields();
+      })
+      .catch((err) => {
+        message.error(err.message);
+      });
   };
 
   return (
@@ -50,6 +69,14 @@ const SurveyForm = () => {
         onFinishFailed={onFinishFailed}
       >
         <Typography.Title>Create New Survey</Typography.Title>
+
+        <Form.Item
+          label="Survey Title"
+          name={["title"]}
+          rules={[{ required: true, message: "Please enter a Survey title" }]}
+        >
+          <Input placeholder="Enter survey title" />
+        </Form.Item>
 
         <Form.List
           name={"questions"}
@@ -90,6 +117,8 @@ const SurveyForm = () => {
                 <Button
                   size={"large"}
                   type="default"
+                  disabled={createSurvey.isLoading}
+                  loading={createSurvey.isLoading}
                   htmlType="submit"
                   icon={<SaveOutlined />}
                 >
@@ -100,6 +129,8 @@ const SurveyForm = () => {
           )}
         </Form.List>
       </Form>
+
+      {surveyData ? <SurveyCreatedModal open data={surveyData} /> : null}
     </div>
   );
 };
@@ -130,10 +161,10 @@ function SurveyField(props: {
 
       <Form.Item
         label="Survey Question"
-        name={[serial, "question"]}
+        name={[serial, "text"]}
         rules={[{ required: true, message: "Please enter a survey question!" }]}
       >
-        <Input placeholder="Enter your survey question" className={"block"} />
+        <Input placeholder="Enter your survey question" />
       </Form.Item>
 
       <Typography.Paragraph className={"uppercase tracking-widest opacity-50"}>
@@ -167,7 +198,7 @@ function SurveyField(props: {
                     >
                       <Form.Item
                         {...restField}
-                        name={[name, "choice"]}
+                        name={[name, "text"]}
                         className={"!mb-0"}
                         rules={[
                           {
