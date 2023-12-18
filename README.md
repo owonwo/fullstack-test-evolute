@@ -16,8 +16,12 @@ This Turborepo includes the following packages/apps:
 Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
 
 # Setup
-### Develop
+### Install
+```
+npm install
+```
 
+### Develop
 To develop all apps and packages, run the following command:
 ```
 npm run dev
@@ -30,7 +34,7 @@ To build all apps and packages, run the following command:
 npm run build
 ```
 
-See project specific README files for detailed information about each application.
+If you run into any issue while starting the Server? See project specific README files for detailed setup information below 
 - [Web](apps/web/README.md)
 - [Server](apps/server/README.md)
 

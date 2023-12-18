@@ -2,8 +2,8 @@ import React from "react";
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import StyledComponentsRegistry from "../libs/AntdRegistry";
-import { QueryRootClient } from "~/react-query/QueryRootClient";
+import StyledComponentsRegistry from "../components/antd-context/AntdRegistry";
+import { QueryRootClient } from "~/components/react-query/QueryRootClient";
 
 const inter = Inter({ subsets: ["latin"] });
 
