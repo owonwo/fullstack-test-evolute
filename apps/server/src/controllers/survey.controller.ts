@@ -6,9 +6,9 @@ class SurveyController {
 
   public getById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const findAllUsersData = await this.repository.findById(req.params.id);
+      const data = await this.repository.findById(req.params.id);
 
-      res.status(200).json({ data: findAllUsersData, message: 'findAll' });
+      res.status(200).json({ success: true, data });
     } catch (error) {
       next(error);
     }

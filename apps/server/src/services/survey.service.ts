@@ -6,12 +6,12 @@ import { CreateSurveyDto } from '@dtos/survey.dto';
 
 class SurveyService {
   public async findById(id: string): Promise<Survey> {
-    if (isEmpty(id)) throw new HttpException(400, 'UserId is empty');
+    if (isEmpty(id)) throw new HttpException(400, 'Invalid Id provided');
 
-    const record = await surveyModel.findOne({ _id: id });
+    const record = await surveyModel.findOne({ _id: id }).catch(() => null);
 
     if (!record) {
-      throw new HttpException(409, "Survey doesn't exist");
+      throw new HttpException(400, "Survey doesn't exist");
     }
 
     return record;
