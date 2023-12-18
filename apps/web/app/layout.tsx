@@ -3,6 +3,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import StyledComponentsRegistry from "../libs/AntdRegistry";
+import { QueryRootClient } from "~/react-query/QueryRootClient";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,7 +20,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className}`}>
-        <StyledComponentsRegistry>{children}</StyledComponentsRegistry>
+        <QueryRootClient>
+          <StyledComponentsRegistry>{children}</StyledComponentsRegistry>
+        </QueryRootClient>
       </body>
     </html>
   );

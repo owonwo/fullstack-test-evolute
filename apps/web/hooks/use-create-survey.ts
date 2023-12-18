@@ -1,6 +1,6 @@
 import { useAsyncLoader } from "~/hooks/use-async-loader";
 import { CreateSurveyPayload, Survey } from "~/types/interfaces";
-import { fetch } from "~/libs/api";
+import { client } from "~/libs/api";
 
 export function useCreateSurvey() {
   const { loading, attachLoader } = useAsyncLoader({ creating: false });
@@ -9,7 +9,7 @@ export function useCreateSurvey() {
     "creating",
     async (body: CreateSurveyPayload) => {
       try {
-        const res = await fetch<{ data: Survey }>("/survey", {
+        const res = await client<{ data: Survey }>("/survey", {
           method: "POST",
           body: body,
         });
