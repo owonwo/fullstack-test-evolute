@@ -6,8 +6,8 @@ export class CreateSurveyDto {
   public title: string;
 
   @IsArray({
-    message: a =>
-      a.value.length === 0
+    message: validation =>
+      validation.value?.length === 0
         ? 'A minimum of one question is required.'
         : 'Questions requires',
   })

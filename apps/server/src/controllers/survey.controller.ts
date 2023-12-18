@@ -24,6 +24,24 @@ class SurveyController {
       next(error);
     }
   };
+
+  public createResponse = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const data = await this.repository.saveResponse(req.body);
+      res
+        .status(200)
+        .json({
+          data: data,
+          message: 'Response saved. Thanks for taking the survey',
+        });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export default SurveyController;

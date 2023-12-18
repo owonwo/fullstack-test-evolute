@@ -1,5 +1,5 @@
 import { Survey } from '@/interfaces/survey.interface';
-import { model, Schema, Document } from 'mongoose';
+import { Document, model, Schema } from 'mongoose';
 
 const optionSchema = new Schema({
   text: {

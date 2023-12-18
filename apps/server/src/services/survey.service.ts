@@ -1,8 +1,10 @@
 import { HttpException } from '@exceptions/HttpException';
 import { isEmpty } from '@utils/util';
-import { Survey } from '@interfaces/survey.interface';
+import { Survey, SurveyResponse } from '@interfaces/survey.interface';
 import surveyModel from '@models/survey.model';
 import { CreateSurveyDto } from '@dtos/survey.dto';
+import ResponseModel from '@models/response.model';
+import SurveyModel from '@models/survey.model';
 
 class SurveyService {
   public async findById(id: string): Promise<Survey> {
@@ -19,7 +21,21 @@ class SurveyService {
 
   public async create(body: CreateSurveyDto): Promise<Survey> {
     const data = await surveyModel.create(body);
+    return data.toJSON();
+  }
 
+  public async saveResponse(body: SurveyResponse): Promise<SurveyResponse> {
+    const survey = await SurveyModel.findById({ _id: body.survey }).catch(
+      () => null,
+    );
+    if (!survey) {
+      throw new HttpException(
+        404,
+        'Error saving response. Please reference a valid survey',
+      );
+    }
+
+    const data = await ResponseModel.create(body);
     return data.toJSON();
   }
 }

@@ -11,3 +11,12 @@ export interface Question {
 export interface Option {
   text: string;
 }
+
+export type SurveyResponse = {
+  user: {
+    full_name: string;
+    email: string;
+  };
+  survey: string;
+  answers: string[];
+};

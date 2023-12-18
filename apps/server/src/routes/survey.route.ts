@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { CreateUserDto } from '@dtos/users.dto';
 import { Routes } from '@interfaces/routes.interface';
 import validationMiddleware from '@middlewares/validation.middleware';
 import SurveyController from '@controllers/survey.controller';
-import {CreateSurveyDto} from "@dtos/survey.dto";
+import { CreateSurveyDto } from '@dtos/survey.dto';
+import { CreateSurveyResponseDto } from '@dtos/survey-response.dto';
 
 class UsersRoute implements Routes {
   public path = '/survey';
@@ -16,7 +16,16 @@ class UsersRoute implements Routes {
 
   private initializeRoutes() {
     this.router.get(`${this.path}/:id`, this.controller.getById);
-    this.router.post(`${this.path}`, validationMiddleware(CreateSurveyDto, 'body'), this.controller.create);
+    this.router.post(
+      `${this.path}`,
+      validationMiddleware(CreateSurveyDto, 'body'),
+      this.controller.create,
+    );
+    this.router.post(
+      `${this.path}/response`,
+      validationMiddleware(CreateSurveyResponseDto, 'body'),
+      this.controller.createResponse,
+    );
   }
 }
 
